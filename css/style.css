@@ -1,0 +1,24 @@
+*{
+    box-sizing: border-box;
+}
+body{
+    background-color: rgb(142, 146, 148);
+}
+
+img{
+    display: inline-block;
+    width: 30%;
+    height: 250px;
+}
+
+ul{
+    width: 50%;
+    background-color: rgb(175, 8, 241);
+}
+
+li{
+    font-size: 30px;
+    font-weight: bold;
+    list-style: none;
+    color: rgb(142, 146, 148);
+}
