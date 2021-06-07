@@ -1,5 +1,5 @@
 'use strict'
-
+let sectionImg = document.getElementById('container');
 let leftImage = document.getElementById('left-image');
 let midImage = document.getElementById('middle-image');
 let rightImage = document.getElementById('right-image');
@@ -8,13 +8,17 @@ let midIndex;
 let rightIndex;
 let favourit =0;
 let picks = 25;
-
+let arrOfNames=[];
+let arrOfVotes=[];
+let arrOfSeen=[];
 
 function product(name,imgPath){
     this.productName=name;
     this.source= imgPath;
     this.vote=0;
+    this.appear=0;
     product.items.push(this);
+    arrOfNames.push(this.productName);
 }
 product.items=[];
 new product('bags', 'images/lab 11/bag.jpg');
@@ -45,33 +49,56 @@ function randImage(){
 
 }
 
+let noReapeat = [];
 
 
 function display3Images(){
+    
     leftIndex=randImage();
     midIndex=randImage();
     rightIndex=randImage();
 
-    while(rightIndex===midIndex || leftIndex===midIndex){
+    while(rightIndex===midIndex || leftIndex===midIndex || rightIndex===leftIndex){
         midIndex=randImage();
-        if(rightIndex===leftIndex){
-            leftIndex=randImage();
-        }
+        leftIndex=randImage();
+       
+       
+        
     }
+    noReapeat.push([leftIndex,rightIndex,midIndex]);
+    console.log(noReapeat);
     rightImage.src = product.items[rightIndex].source;
-    
+    product.items[rightIndex].appear++;
     leftImage.src = product.items[leftIndex].source;
+    product.items[leftIndex].appear++;
     midImage.src = product.items[midIndex].source;
-    
-}
+    product.items[midIndex].appear++;
+  
+        
+
+        
+    }
+
+  
+
 
 display3Images();
+function changeRepeat(){
+    for(let i=0;i<noReapeat.length;i++){
+        if(noReapeat[i+1].includes(noReapeat[i])){
+            noReapeat[i+1]=randImage();
 
+        }
+    }
+}
 
-leftImage.addEventListener('click', choosing);
-rightImage.addEventListener('click', choosing);
-midImage.addEventListener('click', choosing);
- function choosing(event){
+sectionImg.addEventListener('click', choosing);
+// leftImage.addEventListener('click', choosing);
+// rightImage.addEventListener('click', choosing);
+// midImage.addEventListener('click', choosing);
+
+let btnEl;
+function choosing(event){
     //  console.log(event.target.id);
     
     favourit++;
@@ -89,24 +116,83 @@ midImage.addEventListener('click', choosing);
 
         display3Images()
     }else{ 
-      clickDisplay();
-      leftImage.removeEventListener('click', choosing);
-      midImage.removeEventListener('click', choosing);
-      rightImage.removeEventListener('click', choosing);
+      btnEl=document.getElementById('btn')
+      btnEl.addEventListener('click', handleshowing);
+      sectionImg.removeEventListener('click', choosing);
+    //   leftImage.removeEventListener('click', choosing);
+    //   midImage.removeEventListener('click', choosing);
+    //   rightImage.removeEventListener('click', choosing);
+
     }
  }  
-
+ 
+function handleshowing(){
+    clickDisplay();
+    chart1();
+    btnEl.removeEventListener('click',handleshowing);
+}
+ 
  function clickDisplay(){
-    let btn = document.getElementById('btn');
+    
     let favList = document.getElementById('picks');
     for(let i = 0 ; i <product.items.length; i++ ){
+        arrOfVotes.push(product.items[i].vote);
+        arrOfSeen.push(product.items[i].appear);
         let li = document.createElement('li');
         favList.appendChild(li);
-        li.textContent = `${product.items[i].productName} has ${product.items[i].vote} Votes`;
-
+        li.textContent = `${product.items[i].productName} has ${product.items[i].vote} Votes, and been shown ${product.items[i].appear}`;
+    }        
     }
- }
+   
 
+
+
+function chart1(){
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: arrOfNames,
+        datasets: [{
+            label: '# of Votes',
+            data: arrOfVotes,
+            backgroundColor: [
+                
+                'rgba(255, 159, 64, 0.5)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            
+            borderWidth: 3
+        },
+        {
+            label: '# of appearance',
+            data: arrOfSeen,
+            backgroundColor: [
+                
+                'rgba(255, 159, 64, 0.5)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            
+            borderWidth: 3
+        }
+    ]
+  },
+});
+}
 
 //choosing(event);
 
