@@ -1,4 +1,5 @@
 'use strict'
+let prevVotes = document.getElementById('record');
 let sectionImg = document.getElementById('container');
 let leftImage = document.getElementById('left-image');
 let midImage = document.getElementById('middle-image');
@@ -61,10 +62,14 @@ function display3Images(){
     while(rightIndex===midIndex || leftIndex===midIndex || rightIndex===leftIndex){
         midIndex=randImage();
         leftIndex=randImage();
+        
+
        
        
         
     }
+    saveToLs();
+    
     noReapeat.push([leftIndex,rightIndex,midIndex]);
     console.log(noReapeat);
     rightImage.src = product.items[rightIndex].source;
@@ -90,7 +95,32 @@ function changeRepeat(){
 
         }
     }
+
 }
+
+function saveToLs(){
+    let strArr = JSON.stringify(product.items);
+    localStorage.setItem('votes',strArr);
+}
+
+function retrieveFromLs(){
+    let data = localStorage.getItem('votes');
+    let savedData = JSON.parse(data);
+    product.items=savedData;
+    renderData();
+}
+
+function renderData(){
+
+    for(let i=0;i<product.items.length;i++){
+    let li = document.createElement('li');
+    
+    li.textContent = `${product.items[i].productName} Has ${product.items[i].vote} and have been shown ${product.items[i].appear} times`;
+    prevVotes.appendChild(li);    
+    }
+
+}
+
 
 sectionImg.addEventListener('click', choosing);
 // leftImage.addEventListener('click', choosing);
@@ -129,9 +159,10 @@ function choosing(event){
 function handleshowing(){
     clickDisplay();
     chart1();
-    btnEl.removeEventListener('click',handleshowing);
+    btnEl.removeEventListener('click', handleshowing);    
 }
  
+
  function clickDisplay(){
     
     let favList = document.getElementById('picks');
@@ -143,6 +174,7 @@ function handleshowing(){
         li.textContent = `${product.items[i].productName} has ${product.items[i].vote} Votes, and been shown ${product.items[i].appear}`;
     }        
     }
+
    
 
 
@@ -193,6 +225,9 @@ var myChart = new Chart(ctx, {
   },
 });
 }
+
+retrieveFromLs();
+   
 
 //choosing(event);
 
